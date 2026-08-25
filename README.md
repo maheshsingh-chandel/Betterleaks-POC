@@ -27,8 +27,14 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-precommit-hook.ps1
 The hook runs:
 
 ```powershell
-betterleaks git . --pre-commit --config betterleaks.toml --redact --confidence low
+git diff --cached --name-only --diff-filter=ACMR
+# then scans a temporary copy of the staged files with:
+betterleaks dir <staged-files-temp-dir> --config betterleaks.toml --redact --confidence low
 ```
+
+This still verifies Betterleaks in the Git pre-commit lifecycle, but avoids
+version-specific issues in Betterleaks' `git --pre-commit --staged` diff path on
+Windows.
 
 ## Prove it blocks staged leaks
 

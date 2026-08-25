@@ -43,7 +43,7 @@ if ($exitCode -eq 0) {
     throw "Commit succeeded unexpectedly. Check the Betterleaks hook and custom rule config."
 }
 
-if ($commitOutput -match "unknown option|failed to scan|error=") {
+if ($commitOutput -match "unknown option|failed to scan|fatal:|panic:") {
     throw "Commit was blocked by a Betterleaks/runtime error, not by a detected secret. Review the output above."
 }
 
