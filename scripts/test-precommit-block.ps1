@@ -23,8 +23,13 @@ git add $testFile
 
 $beforeCommit = git rev-parse HEAD
 Write-Host "Attempting a commit that should be blocked by Betterleaks..."
+
+$previousErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 $commitOutput = git -c user.name='Betterleaks POC' -c user.email='poc@example.invalid' commit -m "POC should be blocked" 2>&1
 $exitCode = $LASTEXITCODE
+$ErrorActionPreference = $previousErrorActionPreference
+
 $commitOutput | ForEach-Object { Write-Host $_ }
 
 if ($exitCode -eq 0) {
