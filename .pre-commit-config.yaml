@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: betterleaks
+        name: Betterleaks staged secret scan
+        entry: betterleaks git . --pre-commit --staged --config betterleaks.toml --redact --confidence low
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

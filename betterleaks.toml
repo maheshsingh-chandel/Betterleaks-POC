@@ -1,0 +1,38 @@
+[extend]
+useDefault = true
+
+# POC guidance:
+# - This config extends Betterleaks' bundled provider rules.
+# - Custom rules below model secrets that are common in internal repos and may
+#   not have globally recognizable provider formats.
+# - Keep pre-commit fast and offline. Do not pass --validation in the hook.
+
+[[rules]]
+id = "poc-internal-service-token"
+description = "Internal service token using a company-specific prefix"
+keywords = ["poc_live_", "poc_prod_", "internal_service_token"]
+regex = '''(?i)(?:internal[_-]?service[_-]?token|service[_-]?token|api[_-]?token)\s*[:=]\s*["']?((?:poc_live_|poc_prod_)[A-Za-z0-9_-]{24,80})["']?'''
+confidence = "high"
+
+[[rules]]
+id = "poc-jwt-signing-secret"
+description = "Hardcoded JWT or session signing secret"
+keywords = ["JWT_SECRET", "SESSION_SECRET", "SIGNING_SECRET"]
+regex = '''(?i)(?:jwt|session|signing)[_-]?secret\s*[:=]\s*["']?([A-Za-z0-9_./+=-]{32,160})["']?'''
+confidence = "medium"
+
+filter = '''
+filter.containsAny(finding["secret"], ["example", "placeholder", "changeme"])
+'''
+
+[[rules]]
+id = "poc-terraform-sensitive-default"
+description = "Terraform variable with a sensitive name and hardcoded default"
+keywords = ["variable", "default", "password", "secret", "token"]
+regex = '''(?is)variable\s+"[^"]*(?:password|secret|token|api[_-]?key)[^"]*"\s*\{[^}]*default\s*=\s*"([^"]{12,160})"'''
+confidence = "medium"
+
+filter = '''
+filter.containsAny(finding["secret"], ["changeme", "replace-me", "example", "dummy"]) ||
+filter.entropy(finding["secret"]) < 3.0
+'''

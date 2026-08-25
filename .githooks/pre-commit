@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+
+if ! command -v betterleaks >/dev/null 2>&1; then
+  echo "betterleaks is not installed or not on PATH." >&2
+  echo "Install it, then retry the commit. See README.md." >&2
+  exit 1
+fi
+
+echo "Running Betterleaks staged pre-commit scan..."
+betterleaks git . --pre-commit --staged --config betterleaks.toml --redact --confidence low
