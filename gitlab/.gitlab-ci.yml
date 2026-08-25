@@ -1,0 +1,30 @@
+stages:
+  - security
+
+variables:
+  GIT_DEPTH: "0"
+  BETTERLEAKS_CONFIG: "betterleaks.toml"
+  BETTERLEAKS_CONFIDENCE: "low"
+  BETTERLEAKS_REPORT_PATH: "betterleaks-report.json"
+  # changed: scan files changed in this branch/MR.
+  # repo: scan the whole checkout.
+  BETTERLEAKS_SCAN_MODE: "changed"
+
+betterleaks:scan:
+  stage: security
+  tags:
+    - windows
+  before_script:
+    - powershell -NoProfile -ExecutionPolicy Bypass -File gitlab/scripts/install-betterleaks.ps1
+  script:
+    - powershell -NoProfile -ExecutionPolicy Bypass -File gitlab/scripts/run-betterleaks.ps1
+  artifacts:
+    when: always
+    expire_in: 14 days
+    paths:
+      - betterleaks-report.json
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
