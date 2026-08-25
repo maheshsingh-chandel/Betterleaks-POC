@@ -7,5 +7,5 @@ if ! command -v betterleaks >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Running Betterleaks staged pre-commit scan..."
-betterleaks git . --pre-commit --staged --config betterleaks.toml --redact --confidence low
+echo "Running Betterleaks pre-commit scan..."
+betterleaks git . --pre-commit --config betterleaks.toml --redact --confidence low

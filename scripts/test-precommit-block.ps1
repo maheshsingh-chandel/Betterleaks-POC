@@ -23,8 +23,9 @@ git add $testFile
 
 $beforeCommit = git rev-parse HEAD
 Write-Host "Attempting a commit that should be blocked by Betterleaks..."
-git -c user.name='Betterleaks POC' -c user.email='poc@example.invalid' commit -m "POC should be blocked"
+$commitOutput = git -c user.name='Betterleaks POC' -c user.email='poc@example.invalid' commit -m "POC should be blocked" 2>&1
 $exitCode = $LASTEXITCODE
+$commitOutput | ForEach-Object { Write-Host $_ }
 
 if ($exitCode -eq 0) {
     git reset --soft $beforeCommit | Out-Null
@@ -35,6 +36,10 @@ Remove-Item -LiteralPath $testFile -Force
 
 if ($exitCode -eq 0) {
     throw "Commit succeeded unexpectedly. Check the Betterleaks hook and custom rule config."
+}
+
+if ($commitOutput -match "unknown option|failed to scan|error=") {
+    throw "Commit was blocked by a Betterleaks/runtime error, not by a detected secret. Review the output above."
 }
 
 Write-Host "Success: Betterleaks blocked the staged fake secret."

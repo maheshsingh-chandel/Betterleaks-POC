@@ -27,7 +27,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-precommit-hook.ps1
 The hook runs:
 
 ```powershell
-betterleaks git . --pre-commit --staged --config betterleaks.toml --redact --confidence low
+betterleaks git . --pre-commit --config betterleaks.toml --redact --confidence low
 ```
 
 ## Prove it blocks staged leaks

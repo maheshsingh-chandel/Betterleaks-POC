@@ -18,4 +18,4 @@ if (-not (Get-Command betterleaks -ErrorAction SilentlyContinue)) {
 }
 
 Write-Host "Installed Git hooks from .githooks."
-Write-Host "Test with: betterleaks git . --pre-commit --staged --config betterleaks.toml --redact --confidence low"
+Write-Host "Test with: betterleaks git . --pre-commit --config betterleaks.toml --redact --confidence low"
